@@ -10,6 +10,9 @@ O principal problema da gestão de eletropostos no Brasil é a infraestrutura in
 Um sistema inteligente de gerenciamento de eletropostos que:
 
 Integra com inversores e baterias GoodWe
+
 Controla o carregamento de veículos em tempo real
+
 Distribui energia de forma otimizada
+
 Realiza cobrança automática por usuário
