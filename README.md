@@ -37,7 +37,7 @@ O ChargeGrid Smart Manager é uma plataforma inteligente que integra carregadore
 ##  Tecnologias
 - IoT (carregadores conectados)
 - Protocolos OCPP/OCPI
-- Plataforma em nuvem (componente fundamental da TI Verde.)
+- Plataforma em nuvem
 - Machine Learning
 
 ##  Sustentabilidade
