@@ -7,7 +7,7 @@
 
 O principal problema da gestão de eletropostos no Brasil é a infraestrutura insuficiente e desorganizada, marcada por má distribuição, falta de padronização, baixa confiabilidade e dificuldade de uso — o que limita a expansão dos veículos elétricos no país.
 
-# Nossa prospsta e fazer um sistema inteligente de gerenciamento de eletropostos que:
+# Nossa prosposta e fazer um sistema inteligente de gerenciamento de eletropostos que:
 
 Integra com inversores e baterias GoodWe
 
