@@ -615,3 +615,498 @@ footer p {
 /*==============================================================
                 Página de recarga e dados de sessão
 ================================================================*/
+
+.hidden {
+    display: none !important;
+}
+
+/* Ajuste específico da página de recarga */
+.pagina-recarga {
+    gap: 22px;
+}
+
+/* Card principal da sessão */
+.card-progresso-carregamento {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-items: center;
+    gap: 24px 34px;
+    width: 100%;
+    padding: 30px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 22px;
+    box-shadow: 0 12px 35px rgba(17, 24, 39, 0.05);
+}
+
+/* Estado da bateria */
+.estado-bateria {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 205px;
+    padding: 26px;
+    border-radius: 20px;
+    background-color: transparent;
+    border: none;
+}
+
+.estado-bateria > span:first-child {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+}
+
+.estado-bateria strong {
+    display: block;
+    margin: 16px 0 10px;
+    font-size: 58px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.06em;
+    color: var(--color-text);
+}
+
+.status-carregamento {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    width: fit-content;
+    color: var(--color-success);
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.status-carregamento i {
+    width: 18px;
+    height: 18px;
+}
+
+/* Imagem do veículo */
+.area-imagem-recarga {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 250px;
+    height: 250px;
+    width: 100%;
+    padding: 0;
+    border-radius: 20px;
+    background-color: transparent;
+    border: none;
+    overflow: hidden;
+}
+
+.area-imagem-recarga img {
+    width: 150%;
+    height: 150%;
+    object-fit: contain;
+    object-position: center;
+}
+
+/* Progresso abaixo do carro */
+.progresso {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 2px;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    min-height: auto;
+}
+
+/* Se ainda existir no HTML antigo, esconde */
+.progresso-header {
+    display: none;
+}
+
+.barra-progresso {
+    width: 100%;
+    height: 15px;
+    padding: 0;
+    border-radius: 999px;
+    background-color: var(--color-surface-soft);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+}
+
+.barra-preenchida {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #4CAF50, #5EC85E);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.24);
+    transition: width 0.4s ease;
+}
+
+.tempo-recarga {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.tempo-recarga span {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+}
+
+.tempo-recarga strong {
+    color: var(--color-text);
+    font-weight: 700;
+}
+
+/* Cards de métricas */
+.cards-dados-carregamento {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    width: 100%;
+}
+
+.card-dado {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 132px;
+    padding: 22px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 18px;
+    box-shadow: 0 12px 35px rgba(17, 24, 39, 0.04);
+    transition: 0.2s ease;
+}
+
+.card-dado:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 38px rgba(17, 24, 39, 0.07);
+}
+
+.card-dado i {
+    width: 25px;
+    height: 25px;
+    color: var(--color-primary);
+    stroke-width: 2.2;
+}
+
+.card-dado span {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+}
+
+.card-dado strong {
+    margin-top: auto;
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: var(--color-text);
+}
+
+/* Ações da sessão */
+.acoes-sessao {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    width: 100%;
+    padding: 20px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    box-shadow: 0 12px 35px rgba(17, 24, 39, 0.04);
+}
+
+.botao-secundario {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 48px;
+    padding: 0 22px;
+    border: 1px solid var(--color-border);
+    border-radius: 13px;
+    background-color: var(--color-surface);
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    font-weight: 800;
+    transition: 0.2s ease;
+}
+
+.botao-secundario i {
+    width: 18px;
+    height: 18px;
+}
+
+.botao-secundario:hover {
+    color: var(--color-primary);
+    background-color: var(--color-primary-soft);
+    border-color: rgba(230, 0, 18, 0.22);
+}
+
+.acoes-sessao .botao-principal,
+.relatorio-acoes .botao-principal {
+    width: auto;
+    min-width: 190px;
+    height: 48px;
+    padding: 0 22px;
+    border-radius: 13px;
+}
+
+.botao-finalizar {
+    box-shadow: 0 14px 26px rgba(230, 0, 18, 0.20);
+}
+
+/* Relatório da sessão */
+.relatorio-sessao {
+    width: 100%;
+    padding: 28px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 22px;
+    box-shadow: 0 12px 35px rgba(17, 24, 39, 0.05);
+}
+
+.relatorio-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.relatorio-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: var(--color-text);
+}
+
+.relatorio-header p {
+    margin: 6px 0 0;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+}
+
+.status-concluido {
+    background-color: var(--color-success-soft);
+    color: var(--color-success);
+}
+
+.relatorio-conteudo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 24px;
+    align-items: start;
+}
+
+.relatorio-dados {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.relatorio-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 86px;
+    gap: 8px;
+    padding: 18px;
+    border-radius: 16px;
+    background-color: var(--color-surface-soft);
+    border: 1px solid var(--color-border);
+}
+
+.relatorio-item span {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--color-text-secondary);
+}
+
+.relatorio-item strong {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--color-text);
+    line-height: 1.3;
+}
+
+/* Resumo de cobrança */
+.resumo-cobranca {
+    padding: 22px;
+    border-radius: 18px;
+    background-color: var(--color-primary-soft);
+    border: 1px solid rgba(230, 0, 18, 0.18);
+}
+
+.resumo-cobranca h3 {
+    margin: 0 0 20px;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--color-text);
+}
+
+.linha-cobranca {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 13px 0;
+    border-bottom: 1px solid rgba(229, 231, 235, 0.95);
+}
+
+.linha-cobranca span {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+}
+
+.linha-cobranca strong {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--color-text);
+    text-align: right;
+}
+
+.total-cobranca {
+    margin-top: 16px;
+    padding: 18px;
+    border-bottom: none;
+    border-radius: 14px;
+    background-color: var(--color-primary);
+}
+
+.total-cobranca span,
+.total-cobranca strong {
+    color: #FFFFFF;
+}
+
+.total-cobranca strong {
+    font-size: 22px;
+    letter-spacing: -0.04em;
+}
+
+/* Ações do relatório */
+.relatorio-acoes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 24px;
+    padding-top: 22px;
+    border-top: 1px solid var(--color-border);
+}
+
+.relatorio-acoes .botao-secundario,
+.relatorio-acoes .botao-principal {
+    width: 100%;
+}
+
+/* Estados futuros para o JS */
+.sessao-pausada .status-carregamento {
+    background-color: #FFF7ED;
+    color: var(--color-warning);
+}
+
+.sessao-pausada .barra-preenchida {
+    background: linear-gradient(90deg, var(--color-warning), #FBBF24);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+}
+
+.sessao-finalizada .status-carregamento {
+    background-color: var(--color-success-soft);
+    color: var(--color-success);
+}
+
+.sessao-finalizada .barra-preenchida {
+    background: linear-gradient(90deg, var(--color-success), #4ADE80);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
+}
+
+
+
+
+/* Responsividade da página de recarga */
+@media (max-width: 1280px) {
+    .card-progresso-carregamento {
+        grid-template-columns: 230px minmax(0, 1fr);
+    }
+
+    .cards-dados-carregamento {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .relatorio-conteudo {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 900px) {
+    .card-progresso-carregamento {
+        grid-template-columns: 1fr;
+    }
+
+    .estado-bateria {
+        min-height: auto;
+        padding: 18px;
+    }
+
+    .area-imagem-recarga {
+        min-height: 190px;
+        height: 220px;
+    }
+
+    .relatorio-dados {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .acoes-sessao {
+        flex-wrap: wrap;
+    }
+
+    .acoes-sessao .botao-principal,
+    .relatorio-acoes .botao-principal,
+    .botao-secundario {
+        flex: 1;
+        min-width: 180px;
+    }
+}
+
+@media (max-width: 680px) {
+    .card-progresso-carregamento,
+    .relatorio-sessao {
+        padding: 22px;
+    }
+
+    .cards-dados-carregamento,
+    .relatorio-dados,
+    .relatorio-acoes {
+        grid-template-columns: 1fr;
+    }
+
+    .relatorio-header {
+        flex-direction: column;
+    }
+
+    .tempo-recarga {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .acoes-sessao {
+        flex-direction: column;
+    }
+
+    .acoes-sessao .botao-principal,
+    .relatorio-acoes .botao-principal,
+    .botao-secundario {
+        width: 100%;
+        min-width: initial;
+    }
+
+    .estado-bateria strong {
+        font-size: 46px;
+    }
+}
