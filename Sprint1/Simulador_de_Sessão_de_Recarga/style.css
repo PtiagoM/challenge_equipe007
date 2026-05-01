@@ -1,0 +1,40 @@
+body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 50px;
+      margin-left: 270px;
+    }
+
+    /* Painel lateral */
+    #painelHistorico {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100%;
+      background: #f5f5f5;
+      border-right: 2px solid #000;
+      padding: 10px;
+      overflow-y: auto;
+    }
+
+
+    .barra-container {
+      width: 300px;
+      height: 30px;
+      border: 2px solid #000;
+      margin: 20px auto;
+    }
+
+    .barra {
+      height: 100%;
+      width: 0%;
+      background: green;
+      transition: width 0.2s;
+    }
+
+    button {
+      padding: 10px;
+      margin: 5px;
+      cursor: pointer;
+    }
