@@ -1,3 +1,4 @@
+/* Variáveis de cor e fonte */
 :root {
     --color-primary: #E60012;
     --color-primary-hover: #C90010;
@@ -32,6 +33,7 @@ html {
     min-height: 100%;
 }
 
+/* Estilos globais */
 body {
     width: 100%;
     min-height: 100vh;
@@ -64,6 +66,10 @@ img {
     width: 100%;
     min-height: 100vh;
 }
+
+/*==============================================================
+                        Página inicial      
+================================================================*/
 
 /* Menu lateral */
 .menu-lateral {
@@ -423,7 +429,7 @@ img {
     pointer-events: none;
 }
 
-/* Remove controles visuais do number no Chrome */
+/* Remove controles visuais do number no navegador */
 .input-wrapper input[type="number"]::-webkit-outer-spin-button,
 .input-wrapper input[type="number"]::-webkit-inner-spin-button {
     appearance: none;
@@ -605,3 +611,7 @@ footer p {
         font-size: 21px;
     }
 }
+
+/*==============================================================
+                Página de recarga e dados de sessão
+================================================================*/
