@@ -1,6 +1,6 @@
 # Descrição do Projeto
 
-O projeto do modúlo de comtrole de baixo nivel para o ChargeGrid  propõe uma solução computacional otimizada para eletropostos de veículos elétricos, utilizando programação em baixo nível (Assembly NASM) e conceitos de arquitetura de computadores para aumentar a eficiência energética do sistema.
+O projeto do modúlo de controle de baixo nivel para o ChargeGrid  propõe uma solução computacional otimizada para eletropostos de veículos elétricos, utilizando programação em baixo nível (Assembly NASM) e conceitos de arquitetura de computadores para aumentar a eficiência energética do sistema.
 
 A proposta faz parte do EV Challenge 2026 e tem como foco a redução do consumo computacional em sistemas embarcados responsáveis pelo gerenciamento de operações críticas em eletropostos.
 
