@@ -338,6 +338,13 @@ img {
     height: 16px;
 }
 
+.bar-preenchida {
+    height: 100%;
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+    border-radius: 999px;
+    transition: width 0.5s ease;
+}
+
 /* Formulário */
 #form-recarga {
     display: flex;
