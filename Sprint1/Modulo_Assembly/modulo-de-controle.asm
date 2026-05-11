@@ -1,8 +1,9 @@
 section .data
 
-    sensor      db 40
-    limite      db 60
-    user_ok     db 1
+  ; Valores simulados
+    sensor      db 40  ; corrente medida
+    limite      db 60  ; limite permitido
+    user_ok     db 1   ; 1 = autenticado
 
     carga_on    db "Carga Liberada", 10
     carga_on_len equ $ - carga_on
@@ -20,16 +21,21 @@ _start:
     ; =========================
 
     mov al, [sensor]
-    cmp al, [limite]
-    ja desligar
+
+    ; ==========================
+    ; VERIFICA LIMITE DE CARGA
+    ; ==========================
+
+    cmp al, [limite]  ; compara sensor com limite
+    ja desligar       ; se maior -> desliga
 
     ; =========================
     ; VERIFICA USUÁRIO
     ; =========================
 
     mov bl, [user_ok]
-    cmp bl, 1
-    jne desligar
+    cmp bl, 1          ; verifica se o usuário está autenticado
+    jne desligar       ; se não -> desliga
 
 ; =========================
 ; LIBERA CARGA
@@ -43,7 +49,7 @@ ligar:
     mov edx, carga_on_len
     int 0x80
 
-    jmp fim
+    jmp fim              ; pula para o final
 
 ; =========================
 ; DESLIGA CARGA
