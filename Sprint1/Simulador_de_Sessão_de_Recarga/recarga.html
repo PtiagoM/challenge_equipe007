@@ -117,7 +117,7 @@
                 <div class="estado-bateria">
                     <span>Estado da bateria</span>
 
-                    <strong id="porcentagem-bateria">63%</strong>
+                    <strong id="porcentagem-bateria">00%</strong>
 
                     <span class="status-carregamento" id="status-carregamento">
                         <i data-lucide="battery-charging"></i>
@@ -132,18 +132,18 @@
 
                 <div class="progresso">
                     <div class="barra-progresso" aria-label="Progresso da recarga">
-                        <div class="barra-preenchida" id="barra-progresso" style="width: 63%;"></div>
+                        <div class="barra-preenchida" id="barra-progresso" style="width: 0%;"></div>
                     </div>
 
                     <div class="tempo-recarga">
                         <span>
                             <strong>Início:</strong>
-                            <span id="horario-inicio">19:30</span>
+                            <span id="horario-inicio"> 00:00:00</span>
                         </span>
 
                         <span>
                             <strong>Previsão de término:</strong>
-                            <span id="horario-fim">20:45</span>
+                            <span id="horario-fim"> --:--:--</span>
                         </span>
                     </div>
                 </div>
@@ -156,13 +156,13 @@
                 <article class="card-dado">
                     <i data-lucide="zap"></i>
                     <span>Energia entregue</span>
-                    <strong id="energia-entregue">18,6 kWh</strong>
+                    <strong id="energia-entregue">0,0 kWh</strong>
                 </article>
 
                 <article class="card-dado">
                     <i data-lucide="clock"></i>
                     <span>Tempo decorrido</span>
-                    <strong id="tempo-decorrido">00:42:15</strong>
+                    <strong id="tempo-decorrido">00:00:00</strong>
                 </article>
 
                 <article class="card-dado">
@@ -174,7 +174,7 @@
                 <article class="card-dado">
                     <i data-lucide="circle-dollar-sign"></i>
                     <span>Custo estimado</span>
-                    <strong id="custo-estimado">R$ 33,48</strong>
+                    <strong id="custo-estimado">R$ 00,00</strong>
                 </article>
 
             </section>
@@ -184,12 +184,12 @@
 
                 <button class="botao-secundario" type="button" id="btn-pausar-sessao">
                     <i data-lucide="pause"></i>
-                    Pausar sessão
+                    Pausar
                 </button>
 
                 <button class="botao-secundario" type="button" id="btn-continuar-sessao">
                     <i data-lucide="play"></i>
-                    Continuar sessão
+                    Iniciar
                 </button>
 
                 <button class="botao-principal botao-finalizar" type="button" id="btn-finalizar-sessao">
@@ -200,7 +200,7 @@
             </section>
 
             <!-- Relatório da sessão (retirar o hidden através do JS para aparecer o relátorio ao concluir o carregamento) -->
-            <section class="relatorio-sessao " id="relatorio-sessao" aria-labelledby="titulo-relatorio-sessao">
+            <section hidden class="relatorio-sessao " id="relatorio-sessao" aria-labelledby="titulo-relatorio-sessao">
 
                 <div class="relatorio-header">
                     <div>
@@ -240,12 +240,12 @@
 
                         <article class="relatorio-item">
                             <span>Bateria desejada</span>
-                            <strong id="relatorio-bateria-desejada">80%</strong>
+                            <strong id="relatorio-bateria-desejada">100%</strong>
                         </article>
 
                         <article class="relatorio-item">
                             <span>Bateria final</span>
-                            <strong id="relatorio-bateria-final">80%</strong>
+                            <strong id="relatorio-bateria-final">100%</strong>
                         </article>
 
                         <article class="relatorio-item">
