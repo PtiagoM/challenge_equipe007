@@ -8,9 +8,9 @@
 //strings principais abaixo
 let energiaInicial = Math.floor(Math.random() * 26);                                        // escolhe um numero aleatorio de 0 a 26
 
-document.getElementById("relatorio-bateria-inicial").innerText = energiaInicial + "%";      // pega o numero aleatorio e adiciona no relatorio final
+atualizarTexto("relatorio-bateria-inicial", energiaInicial + "%");      // pega o numero aleatorio e adiciona no relatorio final
 
-document.getElementById("porcentagem-bateria").innerText = energiaInicial + "%";            // pega o numero aleatorio e adiciona no status da bateria
+atualizarTexto("porcentagem-bateria", energiaInicial + "%");            // pega o numero aleatorio e adiciona no status da bateria
 
 
 let carregando;                                                                             // variável para controlar o intervalo da recarga, usada para iniciar e parar a recarga
@@ -46,6 +46,31 @@ function carregandoNull() {
 
 
 
+function atualizarIcones() {
+    lucide.createIcons();                                                                   // atualiza os ícones do Lucide, usada para garantir que os ícones sejam exibidos corretamente após mudanças no status da recarga
+}
+
+
+
+function atualizarTexto(id, valor) {
+    document.getElementById(id).innerText = valor;
+}
+
+
+
+function atualizarHTML(id, icone, texto) {
+
+    document.getElementById(id).innerHTML =
+    `
+    <i data-lucide="${icone}"></i>
+    ${texto}
+    `;
+
+    lucide.createIcons();
+}
+
+
+
 //um comando universal, para nao repetir em certas partes
 //ele chama um id do html e adiciona no javascript
 function chamarBotao(idBotao, evento, funcao) {
@@ -54,6 +79,7 @@ function chamarBotao(idBotao, evento, funcao) {
 
     botao.addEventListener(evento, funcao);                                                 // adiciona um ouvinte de evento ao botão, que executa a função quando o evento ocorre
 }
+
 
 
 //função para pegar o horário atual formatado como HH:MM:SS, usada para registrar o início e fim da sessão de recarga
@@ -70,12 +96,14 @@ function pegarHorarioAtual() {
 }
 
 
+
 //função para animar o status de carregamento
 function animarCarregando() {
 
     clearInterval(animacaoCarregando);                                                      // para garantir que não haja múltiplas animações rodando ao mesmo tempo
 
     animacaoCarregando = setInterval(() => {                                                // a cada 700ms, atualiza o status de carregamento para criar a animação
+       
         pontosAnimacao++;
 
         if (pontosAnimacao > 3) {                                                           // reseta a animação após 3 pontos
@@ -86,16 +114,12 @@ function animarCarregando() {
 
 
         // status da bateria
-        document.getElementById("status-carregamento").innerHTML =                          // animação de carregamento no status da bateria
-        `
-        <i data-lucide="battery-charging"></i>
-        Carregando${textoPontos}
-        `;
-
-        lucide.createIcons();                                                               // atualiza os ícones do Lucide para garantir que o ícone de carregamento seja exibido corretamente durante a animação
+        atualizarTexto("status-carregamento", "", `Carregando${textoPontos}`);
+                                                                 
 
     }, 700);                                                                                // 700ms para atualizar a animação, pode ser ajustado conforme necessário
 }
+
 
 
 //visual da barra de progresso, atualiza conforme a energia aumenta
@@ -109,6 +133,7 @@ function atualizarBarraProgresso() {
 }
 
 
+
 //função para atualizar a quantidade de kWh carregados
 function atualizarkWh() {
 
@@ -116,8 +141,9 @@ function atualizarkWh() {
 
     let kWhCarregados = energiaCarregada * 0.02 * 37;                                       // converte a porcentagem de energia carregada em kWh, considerando que cada 1% corresponde a 0.02 kWh e o custo por kWh é de 37 reais 
 
-    document.getElementById("energia-entregue").innerText=`${kWhCarregados.toFixed(2)} kWh`;// atualiza o valor de kWh entregues na tela, formatado com 2 casas decimais
+    atualizarHTML("energia-entregue", "card-dado", `${kWhCarregados.toFixed(2)} kWh`);      // atualiza o valor de kWh entregues na tela, formatado com 2 casas decimais
 }
+
 
 
 //função para atualizar o tempo decorrido da recarga, convertendo o tempo em segundos para um formato de horas, minutos e segundos
@@ -140,10 +166,10 @@ function atualizarTempo() {
     let tempoFormatado = `${horas}:${minutos}:${segundos}`;                                 // formata o tempo em horas, minutos e segundos
 
     // atualiza na tela
-    document.getElementById("tempo-decorrido").innerText = tempoFormatado;
+    atualizarTexto("tempo-decorrido", tempoFormatado);
 
     // atualiza no relatório
-    document.getElementById("relatorio-tempo-total").innerText = tempoFormatado;
+    atualizarTexto("relatorio-tempo-total", tempoFormatado);
 }
 
 
@@ -155,13 +181,12 @@ function custoPelaRecarga() {
 
     let custoTotal = energiaCarregada * custoPorCarregamento;
 
-    document.getElementById("custo-estimado").innerText = `R$ ${custoTotal.toFixed(2)}`;
+    atualizarTexto("custo-estimado", `R$ ${custoTotal.toFixed(2)}`);
 
-    document.getElementById("total-cobranca").innerText = `R$ ${custoTotal.toFixed(2)}`;
+    atualizarTexto("total-cobranca", `R$ ${custoTotal.toFixed(2)}`);
 
-    document.getElementById("subtotal-cobranca").innerText = `R$ ${custoTotal.toFixed(2)}`;
+    atualizarTexto("subtotal-cobranca", `R$ ${custoTotal.toFixed(2)}`);
 }
-
 
 
 
@@ -175,9 +200,9 @@ function iniciarRecarga() {
 
             horarioInicioSessao = pegarHorarioAtual();
 
-            document.getElementById("horario-inicio").innerText = horarioInicioSessao;
+            atualizarTexto("horario-inicio", horarioInicioSessao);
 
-            document.getElementById("relatorio-inicio").innerText = horarioInicioSessao;
+            atualizarTexto("relatorio-inicio", horarioInicioSessao);
         }
 
         animarCarregando();
@@ -188,23 +213,14 @@ function iniciarRecarga() {
 
                 energiaInicial = Math.min(energiaInicial + 5, 100);
 
-                document.getElementById("btn-continuar-sessao").innerHTML =
-                `
-                <i data-lucide="play"></i>
-                Carregando
-                `;
+                atualizarHTML("btn-continuar-sessao", "play", "Carregando");
+                
+
+                atualizarHTML("btn-pausar-sessao", "pause", "Pausar");
 
 
-                document.getElementById("btn-pausar-sessao").innerHTML =
-                `
-                <i data-lucide="pause"></i>
-                Pausar
-                `;
 
-                lucide.createIcons();
-
-
-                document.getElementById("porcentagem-bateria").innerText = energiaInicial + "%";
+                atualizarTexto("porcentagem-bateria", energiaInicial + "%");
 
 
                 atualizarkWh();             // atualiza kWh em tempo real 
@@ -222,7 +238,6 @@ function iniciarRecarga() {
         }, 1000);
     }
 }
-
 chamarBotao("btn-continuar-sessao", "click", iniciarRecarga);
 
 
@@ -235,17 +250,9 @@ function pararRecarga() {
         // pausa a recarga
         carregandoNull();
 
-        document.getElementById("btn-pausar-sessao").innerHTML =
-        `
-        <i data-lucide="pause"></i>
-        Pausado
-        `;
-        document.getElementById("btn-continuar-sessao").innerHTML =
-        `
-        <i data-lucide="play"></i>
-        Continuar
-        `;
-        lucide.createIcons();
+        atualizarHTML("btn-pausar-sessao", "pause", "Pausado");
+
+        atualizarHTML("btn-continuar-sessao", "play", "Continuar");
 
         console.log("Recarga pausada");
 
@@ -257,7 +264,6 @@ function pararRecarga() {
         console.log("Recarga retomada");
     }
 }
-
 chamarBotao("btn-pausar-sessao", "click", pararRecarga);
 
 
@@ -268,9 +274,9 @@ function finalizarRecarga() {
 
         horarioFimSessao = pegarHorarioAtual();
 
-        document.getElementById("horario-fim").innerText = horarioFimSessao;
+        atualizarTexto("horario-fim", horarioFimSessao);
 
-        document.getElementById("relatorio-fim").innerText = horarioFimSessao;
+        atualizarTexto("relatorio-fim", horarioFimSessao);
 
 
         document.getElementById("relatorio-sessao").removeAttribute("hidden");
@@ -288,25 +294,18 @@ function finalizarRecarga() {
             document.getElementById("energia-entregue").innerText;
 
 
-        document.getElementById("relatorio-bateria-final").innerText = energiaInicial + "%";
+        atualizarTexto("relatorio-bateria-final", energiaInicial + "%");
 
 
-        document.getElementById("status-carregamento").innerHTML =
-        `
-        <i data-lucide="check"></i>
-        Recarga completa
-        `;
-
-        lucide.createIcons();
+        atualizarHTML("status-carregamento", "check", "Recarga completa");
+        
 
     } else {
 
         console.log("A recarga ainda não foi finalizada");
     }
 }
-
 chamarBotao("btn-finalizar-sessao", "click", finalizarRecarga);
-
 
 
 
@@ -329,8 +328,7 @@ function reiniciarSessao() {
 
 
     // atualiza bateria
-    document.getElementById("porcentagem-bateria").innerText =
-        energiaInicial + "%";
+    atualizarTexto("porcentagem-bateria", energiaInicial + "%");
 
 
     // atualiza barra
@@ -339,42 +337,29 @@ function reiniciarSessao() {
 
 
     // reseta tempo
-    document.getElementById("tempo-decorrido").innerText =
-        "00:00:00";
+    atualizarTexto("tempo-decorrido", "00:00:00");
 
 
     // reseta custo
-    document.getElementById("custo-estimado").innerText =
-        "R$ 0,00";
+    atualizarTexto("custo-estimado", "R$ 0,00");
 
 
     // reseta kWh
-    document.getElementById("energia-entregue").innerText =
-        "0.00 kWh";
+    atualizarTexto("energia-entregue", "0.00 kWh");
 
 
     // reseta horários
-    document.getElementById("horario-inicio").innerText =
-        "--:--:--";
+    atualizarTexto("horario-inicio", "--:--:--");
 
-    document.getElementById("horario-fim").innerText =
-        "--:--:--";
+    atualizarTexto("horario-fim", "--:--:--");
+    
+    atualizarTexto("relatorio-inicio", "--:--:--");
 
-    document.getElementById("relatorio-inicio").innerText =
-        "--:--:--";
-
-    document.getElementById("relatorio-fim").innerText =
-        "--:--:--";
+    atualizarTexto("relatorio-fim", "--:--:--");
 
 
     // volta status
-    document.getElementById("status-carregamento").innerHTML =
-    `
-    <i data-lucide="battery-charging"></i>
-    Aguardando recarga
-    `;
-
-
+    atualizarHTML("status-carregamento", "battery-charging", "Aguardando recarga");
     // esconde relatório
     document.getElementById("relatorio-sessao").hidden = true;
 
@@ -386,27 +371,14 @@ function reiniciarSessao() {
 
 
     // reseta botão continuar
-    document.getElementById("btn-continuar-sessao").innerHTML =
-    `
-    <i data-lucide="play"></i>
-    Iniciar recarga
-    `;
-
+    atualizarHTML("btn-continuar-sessao", "play", "Iniciar");
 
     // reseta botão pausar
-    document.getElementById("btn-pausar-sessao").innerHTML =
-    `
-    <i data-lucide="pause"></i>
-    Pausar recarga
-    `;
-
-
-    lucide.createIcons();
+    atualizarHTML("btn-pausar-sessao", "pause", "Pausar");
 
     // inicia nova recarga automaticamente
     iniciarRecarga();
 
     console.log("Nova sessão iniciada");
 }
-
 chamarBotao("btn-voltar-inicio", "click", reiniciarSessao);
