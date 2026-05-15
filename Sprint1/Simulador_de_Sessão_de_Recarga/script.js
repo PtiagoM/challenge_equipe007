@@ -1,384 +1,336 @@
-///Construir um programa que simule:
-
-//	Início e fim de sessão de recarga
-//	Controle básico de energia
-//	Registro de dados da sessão
-//  Aplicação de regras simples de cobrança
-
-//strings principais abaixo
-let energiaInicial = Math.floor(Math.random() * 26);                                        // escolhe um numero aleatorio de 0 a 26
-
-atualizarTexto("relatorio-bateria-inicial", energiaInicial + "%");      // pega o numero aleatorio e adiciona no relatorio final
-
-atualizarTexto("porcentagem-bateria", energiaInicial + "%");            // pega o numero aleatorio e adiciona no status da bateria
-
-
-let carregando;                                                                             // variável para controlar o intervalo da recarga, usada para iniciar e parar a recarga
-let energiaFinal = 100;                                                                     // valor fixo para simular a recarga completa, pode ser ajustado conforme necessário
-
-let bateriaInicialSessao = energiaInicial;                                                  // para armazenar o valor inicial da bateria no início da sessão, usado para calcular a energia carregada durante a sessão
-
-let custoPorCarregamento = 0.57;                                                            // valor fictício, pode ser ajustado conforme necessário
-
-let energiaEntregue = 18.6;                                                                 // valor fictício, pode ser ajustado conforme necessário
-
-let animacaoCarregando;                                                                     // variável para controlar a animação de carregamento
-
-let pontosAnimacao = 0;                                                                     // para criar uma animação de pontos que aparecem e desaparecem durante o carregamento
-
-let tempoDeRecarga = 0;                                                                     // tempo em segundos para calcular o tempo decorrido da recarga
-
-let horarioInicioSessao = "";                                                               // para armazenar o horário de início da sessão de recarga
-
-let horarioFimSessao = "";                                                                  // para armazenar o horário de fim da sessão de recarga
-
-
-
-//função para limpar os intervalos de recarga e animação, usada para pausar e finalizar a recarga
-function carregandoNull() {
-
-    clearInterval(carregando);                                                              // para parar a recarga
-
-    clearInterval(animacaoCarregando);                                                      // para parar a animação de carregamento
-
-    carregando = null;                                                                      // para indicar que a recarga não está ativa
-}
-
-
-
-function atualizarIcones() {
-    lucide.createIcons();                                                                   // atualiza os ícones do Lucide, usada para garantir que os ícones sejam exibidos corretamente após mudanças no status da recarga
-}
-
-
+// ============================================================
+//  Utilitários
+// ============================================================
 
 function atualizarTexto(id, valor) {
-    document.getElementById(id).innerText = valor;
+    const el = document.getElementById(id);
+    if (el) el.innerText = valor;
 }
 
-
-
 function atualizarHTML(id, icone, texto) {
-
-    document.getElementById(id).innerHTML =
-    `
-    <i data-lucide="${icone}"></i>
-    ${texto}
-    `;
-
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = `<i data-lucide="${icone}"></i> ${texto}`;
     lucide.createIcons();
 }
 
-
-
-//um comando universal, para nao repetir em certas partes
-//ele chama um id do html e adiciona no javascript
 function chamarBotao(idBotao, evento, funcao) {
-
-    let botao = document.getElementById(idBotao);                                           // pega o elemento do botão pelo id
-
-    botao.addEventListener(evento, funcao);                                                 // adiciona um ouvinte de evento ao botão, que executa a função quando o evento ocorre
+    const botao = document.getElementById(idBotao);
+    if (botao) botao.addEventListener(evento, funcao);
 }
 
-
-
-//função para pegar o horário atual formatado como HH:MM:SS, usada para registrar o início e fim da sessão de recarga
 function pegarHorarioAtual() {
-
-    let agora = new Date();                                                                 // cria um objeto Date com a data e hora atuais
-
-// formata o horário para HH:MM:SS, adicionando zero à esquerda
-    let horas = String(agora.getHours()).padStart(2, "0");              
-    let minutos = String(agora.getMinutes()).padStart(2, "0");
-    let segundos = String(agora.getSeconds()).padStart(2, "0");
-
-    return `${horas}:${minutos}:${segundos}`;                                               // retorna o horário formatado como uma string
+    const agora = new Date();
+    const horas   = String(agora.getHours()).padStart(2, "0");
+    const minutos = String(agora.getMinutes()).padStart(2, "0");
+    const segundos = String(agora.getSeconds()).padStart(2, "0");
+    return `${horas}:${minutos}:${segundos}`;
 }
 
+// ============================================================
+//  Página de índice — salva dados do formulário
+// ============================================================
 
+const formRecarga = document.getElementById("form-recarga");
 
-//função para animar o status de carregamento
-function animarCarregando() {
+if (formRecarga) {
+    formRecarga.addEventListener("submit", function (e) {
+        e.preventDefault(); // impede o envio padrão
 
-    clearInterval(animacaoCarregando);                                                      // para garantir que não haja múltiplas animações rodando ao mesmo tempo
+        // Lê os valores do formulário
+        const dadosSessao = {
+            nome:              document.getElementById("nome").value.trim(),
+            tipo_usuario:      document.getElementById("tipo_usuario").value,
+            capacidade_bateria: parseFloat(document.getElementById("capacidade_bateria").value),
+            bateria_inicial:   parseFloat(document.getElementById("bateria_inicial").value),
+            bateria_desejada:  parseFloat(document.getElementById("bateria_desejada").value),
+            origem_energia:    document.getElementById("origem_energia").value,
+        };
 
-    animacaoCarregando = setInterval(() => {                                                // a cada 700ms, atualiza o status de carregamento para criar a animação
-       
-        pontosAnimacao++;
-
-        if (pontosAnimacao > 3) {                                                           // reseta a animação após 3 pontos
-            pontosAnimacao = 0;                                                             // quantos ponto aparecem na animação antes de resetar
+        // Validação extra: bateria inicial < bateria desejada
+        if (dadosSessao.bateria_inicial >= dadosSessao.bateria_desejada) {
+            alert("A bateria inicial deve ser menor que a bateria desejada.");
+            return;
         }
 
-        let textoPontos = ".".repeat(pontosAnimacao).padEnd(3, "\u00A0");                   // cria uma string com pontos e espaços para manter o layout consistente durante a animação
-
-
-        // status da bateria
-        atualizarTexto("status-carregamento", "", `Carregando${textoPontos}`);
-                                                                 
-
-    }, 700);                                                                                // 700ms para atualizar a animação, pode ser ajustado conforme necessário
+        // Salva no sessionStorage e redireciona
+        sessionStorage.setItem("dadosSessao", JSON.stringify(dadosSessao));
+        window.location.href = "recarga.html";
+    });
 }
 
+// ============================================================
+//  Página de recarga — simulação
+// ============================================================
 
+// Só roda se os elementos da página de recarga existirem
+if (document.getElementById("porcentagem-bateria")) {
 
-//visual da barra de progresso, atualiza conforme a energia aumenta
-function atualizarBarraProgresso() {
+    // --- Carrega dados salvos pelo formulário ---
+    const dadosSessao = JSON.parse(sessionStorage.getItem("dadosSessao")) || null;
 
-    let barra = document.getElementById("barra-progresso");                                 // pega o elemento da barra de progresso pelo id
+    // Dados do usuário
+    const nomeUsuario       = dadosSessao?.nome              || "Usuário";
+    const tipoUsuario       = dadosSessao?.tipo_usuario      || "comum";
+    const capacidadeBateria = dadosSessao?.capacidade_bateria || 60;
+    const bateriaDesejada   = dadosSessao?.bateria_desejada  || 100;
+    const origemEnergia     = dadosSessao?.origem_energia    || "rede";
 
-    barra.style.width = energiaInicial + "%";                                               // cria o efeito da barra enchendo conforme a energia aumenta
+    // Bateria inicial: usa o valor do formulário, ou aleatório se não houver
+    let energiaInicial = dadosSessao
+        ? dadosSessao.bateria_inicial
+        : Math.floor(Math.random() * 26);
 
-    barra.style.transition = "width 1s ease";                                               // deixa a barra suave
-}
+    // Preenche campos estáticos do relatório com dados do formulário
+    atualizarTexto("relatorio-nome", nomeUsuario);
+    atualizarTexto("relatorio-tipo-usuario",
+        tipoUsuario === "assinante" ? "Assinante GOODWE+" :
+        tipoUsuario === "corporativo" ? "Corporativo" : "Comum");
+    atualizarTexto("relatorio-capacidade-bateria", capacidadeBateria + " kWh");
+    atualizarTexto("relatorio-bateria-desejada", bateriaDesejada + "%");
+    atualizarTexto("relatorio-origem-energia",
+        origemEnergia === "fotovoltaica" ? "Energia fotovoltaica" : "Rede elétrica");
 
+    // Preenche estado inicial da bateria na tela
+    atualizarTexto("relatorio-bateria-inicial", energiaInicial + "%");
+    atualizarTexto("porcentagem-bateria", energiaInicial + "%");
 
+    // --- Variáveis de controle da sessão ---
+    let carregando        = null;
+    let animacaoCarregando = null;
+    let pontosAnimacao    = 0;
+    let tempoDeRecarga    = 0;
+    let horarioInicioSessao = "";
+    let horarioFimSessao    = "";
+    let bateriaInicialSessao = energiaInicial;
 
-//função para atualizar a quantidade de kWh carregados
-function atualizarkWh() {
+    // --- Tarifa por tipo de usuário ---
+    // Assinante tem 15% de desconto; corporativo, 10%
+    const tarifaBase = 1.80; // R$/kWh
+    const descontos = { assinante: 0.15, corporativo: 0.10, comum: 0 };
+    const desconto  = descontos[tipoUsuario] || 0;
+    const tarifaFinal = tarifaBase * (1 - desconto);
 
-    let energiaCarregada = energiaInicial - bateriaInicialSessao;                           // calcula a energia carregada subtraindo o valor inicial da bateria do valor atual
+    // Mostra tarifa no relatório
+    atualizarTexto("tarifa-base", `R$ ${tarifaFinal.toFixed(2)}/kWh`);
+    atualizarTexto("tipo-tarifa",
+        tipoUsuario === "assinante" ? `Com desconto (${(desconto * 100).toFixed(0)}%)` :
+        tipoUsuario === "corporativo" ? `Corporativo (${(desconto * 100).toFixed(0)}% off)` :
+        "Horário normal");
+    atualizarTexto("desconto-cobranca",
+        desconto > 0 ? `-${(desconto * 100).toFixed(0)}%` : "R$ 0,00");
 
-    let kWhCarregados = energiaCarregada * 0.02 * 37;                                       // converte a porcentagem de energia carregada em kWh, considerando que cada 1% corresponde a 0.02 kWh e o custo por kWh é de 37 reais 
+    // --------------------------------------------------------
+    //  Funções auxiliares
+    // --------------------------------------------------------
 
-    atualizarHTML("energia-entregue", "card-dado", `${kWhCarregados.toFixed(2)} kWh`);      // atualiza o valor de kWh entregues na tela, formatado com 2 casas decimais
-}
+    function carregandoNull() {
+        clearInterval(carregando);
+        clearInterval(animacaoCarregando);
+        carregando = null;
+    }
 
+    function atualizarIcones() {
+        lucide.createIcons();
+    }
 
+    function animarCarregando() {
+        clearInterval(animacaoCarregando);
+        animacaoCarregando = setInterval(() => {
+            pontosAnimacao = (pontosAnimacao % 3) + 1;
+            const textoPontos = ".".repeat(pontosAnimacao).padEnd(3, "\u00A0");
+            // Atualiza apenas o texto, preservando o ícone existente
+            const el = document.getElementById("status-carregamento");
+            if (el) {
+                el.innerHTML = `<i data-lucide="battery-charging"></i> Carregando${textoPontos}`;
+                lucide.createIcons();
+            }
+        }, 700);
+    }
 
-//função para atualizar o tempo decorrido da recarga, convertendo o tempo em segundos para um formato de horas, minutos e segundos
-function atualizarTempo() {
+    function atualizarBarraProgresso() {
+        const barra = document.getElementById("barra-progresso");
+        if (barra) {
+            barra.style.width = energiaInicial + "%";
+            barra.style.transition = "width 1s ease";
+        }
+    }
 
-    tempoDeRecarga += 1;                                                                    // incrementa o tempo de recarga em 1 segundo a cada chamada da função, usada para calcular o tempo decorrido da recarga
+    function atualizarkWh() {
+        const energiaCarregada = energiaInicial - bateriaInicialSessao;
+        const kWhCarregados = energiaCarregada * (capacidadeBateria / 100);
+        atualizarHTML("energia-entregue", "zap", `${kWhCarregados.toFixed(2)} kWh`);
+    }
 
-    // cálculos
-    let horas = Math.floor(tempoDeRecarga / 3600);                                          // calcula o número de horas dividindo o tempo total em segundos por 3600 e arredondando para baixo
+    function atualizarTempo() {
+        tempoDeRecarga += 1;
+        const horas   = String(Math.floor(tempoDeRecarga / 3600)).padStart(2, "0");
+        const minutos = String(Math.floor((tempoDeRecarga % 3600) / 60)).padStart(2, "0");
+        const segundos = String(tempoDeRecarga % 60).padStart(2, "0");
+        const tempoFormatado = `${horas}:${minutos}:${segundos}`;
+        atualizarTexto("tempo-decorrido", tempoFormatado);
+        atualizarTexto("relatorio-tempo-total", tempoFormatado);
+    }
 
-    let minutos = Math.floor((tempoDeRecarga % 3600) / 60);                                 // calcula o número de minutos pegando o restante da divisão do tempo total por 3600 e dividindo por 60, arredondando para baixo
+    function custoPelaRecarga() {
+        const energiaCarregada = energiaInicial - bateriaInicialSessao;
+        const kWhCarregados    = energiaCarregada * (capacidadeBateria / 100);
+        const custoTotal       = kWhCarregados * tarifaFinal;
+        atualizarTexto("custo-estimado", `R$ ${custoTotal.toFixed(2)}`);
+        atualizarTexto("total-cobranca",    `R$ ${custoTotal.toFixed(2)}`);
+        atualizarTexto("subtotal-cobranca", `R$ ${custoTotal.toFixed(2)}`);
+    }
 
-    let segundos = tempoDeRecarga % 60;                                                     // calcula o número de segundos pegando o restante da divisão do tempo total por 60
+    // --------------------------------------------------------
+    //  Iniciar recarga
+    // --------------------------------------------------------
 
-    // adiciona zero à esquerda
-    horas = String(horas).padStart(2, "0");
-    minutos = String(minutos).padStart(2, "0");
-    segundos = String(segundos).padStart(2, "0");
+    function iniciarRecarga() {
+        if (carregando) return; // já está rodando
 
-    let tempoFormatado = `${horas}:${minutos}:${segundos}`;                                 // formata o tempo em horas, minutos e segundos
-
-    // atualiza na tela
-    atualizarTexto("tempo-decorrido", tempoFormatado);
-
-    // atualiza no relatório
-    atualizarTexto("relatorio-tempo-total", tempoFormatado);
-}
-
-
-
-//função para calcular o custo da recarga
-function custoPelaRecarga() {
-
-    let energiaCarregada = energiaInicial - bateriaInicialSessao;
-
-    let custoTotal = energiaCarregada * custoPorCarregamento;
-
-    atualizarTexto("custo-estimado", `R$ ${custoTotal.toFixed(2)}`);
-
-    atualizarTexto("total-cobranca", `R$ ${custoTotal.toFixed(2)}`);
-
-    atualizarTexto("subtotal-cobranca", `R$ ${custoTotal.toFixed(2)}`);
-}
-
-
-
-//função para iniciar a recarga
-function iniciarRecarga() {
-
-    if (!carregando) {
-
-        // pega o horário de início apenas 1 vez
+        // Registra horário de início apenas uma vez
         if (horarioInicioSessao === "") {
-
             horarioInicioSessao = pegarHorarioAtual();
-
             atualizarTexto("horario-inicio", horarioInicioSessao);
-
             atualizarTexto("relatorio-inicio", horarioInicioSessao);
         }
 
         animarCarregando();
 
         carregando = setInterval(() => {
-
-            if (energiaInicial < 100) {
-
-                energiaInicial = Math.min(energiaInicial + 5, 100);
+            if (energiaInicial < bateriaDesejada) {
+                energiaInicial = Math.min(energiaInicial + 5, bateriaDesejada);
 
                 atualizarHTML("btn-continuar-sessao", "play", "Carregando");
-                
-
                 atualizarHTML("btn-pausar-sessao", "pause", "Pausar");
-
-
-
                 atualizarTexto("porcentagem-bateria", energiaInicial + "%");
 
-
-                atualizarkWh();             // atualiza kWh em tempo real 
-                atualizarTempo();           // atualiza tempo em tempo real
-                atualizarBarraProgresso();  // atualiza barra de progresso em tempo real
-                custoPelaRecarga();         // atualiza custo em tempo real
+                atualizarkWh();
+                atualizarTempo();
+                atualizarBarraProgresso();
+                custoPelaRecarga();
 
             } else {
-
                 carregandoNull();
-
                 finalizarRecarga();
             }
-
         }, 1000);
     }
-}
-chamarBotao("btn-continuar-sessao", "click", iniciarRecarga);
 
+    chamarBotao("btn-continuar-sessao", "click", iniciarRecarga);
 
+    // --------------------------------------------------------
+    //  Pausar / retomar
+    // --------------------------------------------------------
 
-//função para pausar a recarga
-function pararRecarga() {
-
-    if (carregando) {
-
-        // pausa a recarga
-        carregandoNull();
-
-        atualizarHTML("btn-pausar-sessao", "pause", "Pausado");
-
-        atualizarHTML("btn-continuar-sessao", "play", "Continuar");
-
-        console.log("Recarga pausada");
-
-    } else {
-
-        // retoma a recarga
-        iniciarRecarga();
-
-        console.log("Recarga retomada");
+    function pararRecarga() {
+        if (carregando) {
+            carregandoNull();
+            atualizarHTML("btn-pausar-sessao",   "pause", "Pausado");
+            atualizarHTML("btn-continuar-sessao", "play",  "Continuar");
+        } else {
+            iniciarRecarga();
+        }
     }
-}
-chamarBotao("btn-pausar-sessao", "click", pararRecarga);
 
+    chamarBotao("btn-pausar-sessao", "click", pararRecarga);
 
+    // --------------------------------------------------------
+    //  Finalizar recarga
+    // --------------------------------------------------------
 
-function finalizarRecarga() {
-
-    if (energiaInicial >= 100) {
-
+    function finalizarRecarga() {
+        if (energiaInicial < bateriaDesejada) {
+            console.log("A recarga ainda não foi finalizada.");
+            return;
+        }
+ 
         horarioFimSessao = pegarHorarioAtual();
-
-        atualizarTexto("horario-fim", horarioFimSessao);
-
-        atualizarTexto("relatorio-fim", horarioFimSessao);
-
-
-        document.getElementById("relatorio-sessao").removeAttribute("hidden");
-
-        document.getElementById("btn-continuar-sessao").style.display = "none";
-
-        document.getElementById("btn-pausar-sessao").style.display = "none";
-
-
-        carregandoNull();
-
-        console.log("Recarga finalizada");
-
-        document.getElementById("relatorio-energia-consumida").innerText =
-            document.getElementById("energia-entregue").innerText;
-
-
+        atualizarTexto("horario-fim",    horarioFimSessao);
+        atualizarTexto("relatorio-fim",  horarioFimSessao);
         atualizarTexto("relatorio-bateria-final", energiaInicial + "%");
-
-
-        atualizarHTML("status-carregamento", "check", "Recarga completa");
-        
-
-    } else {
-
-        console.log("A recarga ainda não foi finalizada");
+        atualizarTexto("relatorio-status", "Concluída");
+ 
+        // Energia consumida (kWh)
+        const elEnergiaEntregue = document.getElementById("energia-entregue");
+        if (elEnergiaEntregue) {
+            atualizarTexto("relatorio-energia-consumida", elEnergiaEntregue.innerText);
+        }
+ 
+        // Mostra relatório e esconde botões de sessão
+        const relatorio = document.getElementById("relatorio-sessao");
+        if (relatorio) relatorio.removeAttribute("hidden");
+ 
+        const btnContinuar = document.getElementById("btn-continuar-sessao");
+        const btnPausar    = document.getElementById("btn-pausar-sessao");
+        if (btnContinuar) btnContinuar.style.display = "none";
+        if (btnPausar)    btnPausar.style.display    = "none";
+ 
+        carregandoNull();
+ 
+        // Atualiza status visual
+        atualizarHTML("status-carregamento", "check-circle", "Recarga completa");
+ 
+        // Salva no histórico (localStorage persiste entre sessões)
+        const relatorioSessao = {
+            nome:             nomeUsuario,
+            tipoUsuario,
+            capacidadeBateria,
+            bateriaInicial:   bateriaInicialSessao + "%",
+            bateriaFinal:     energiaInicial + "%",
+            tempoTotal:       document.getElementById("relatorio-tempo-total")?.innerText,
+            energiaConsumida: document.getElementById("energia-entregue")?.innerText,
+            custoTotal:       document.getElementById("total-cobranca")?.innerText,
+            horarioInicio:    horarioInicioSessao,
+            horarioFim:       horarioFimSessao,
+            data:             new Date().toLocaleDateString("pt-BR"),
+        };
+ 
+        const historicoRecargas = JSON.parse(localStorage.getItem("historicoRecargas")) || [];
+        historicoRecargas.push(relatorioSessao);
+        localStorage.setItem("historicoRecargas", JSON.stringify(historicoRecargas));
+ 
+        // ── Exibe histórico completo no console ──────────────────────
+        console.clear();
+        console.log("%c GOODWE — Histórico de Recargas", "font-size:16px;font-weight:bold;color:#E60012");
+        console.log("%c" + historicoRecargas.length + " sessão(ões) registrada(s)\n", "color:#6B7280");
+ 
+        historicoRecargas.forEach((sessao, i) => {
+            console.groupCollapsed(
+                "%c Sessão #" + (i + 1) + " — " + (sessao.nome || "Usuário") + "  |  " + (sessao.data || ""),
+                "font-weight:bold;color:#111827"
+            );
+            console.log("%cUsuário",        "color:#6B7280;font-weight:bold", sessao.nome);
+            console.log("%cTipo",           "color:#6B7280;font-weight:bold", sessao.tipoUsuario);
+            console.log("%cCapacidade",     "color:#6B7280;font-weight:bold", sessao.capacidadeBateria + " kWh");
+            console.log("%cBateria inicial","color:#6B7280;font-weight:bold", sessao.bateriaInicial);
+            console.log("%cBateria final",  "color:#6B7280;font-weight:bold", sessao.bateriaFinal);
+            console.log("%cEnergia entregue","color:#6B7280;font-weight:bold", sessao.energiaConsumida);
+            console.log("%cTempo total",    "color:#6B7280;font-weight:bold", sessao.tempoTotal);
+            console.log("%cInício",         "color:#6B7280;font-weight:bold", sessao.horarioInicio);
+            console.log("%cFim",            "color:#6B7280;font-weight:bold", sessao.horarioFim);
+            console.log("%cCusto total",    "color:#E60012;font-weight:bold", sessao.custoTotal);
+            console.groupEnd();
+        });
+ 
+        console.log("\n%c Objeto completo do histórico:", "color:#6B7280");
+        console.table(historicoRecargas);
     }
-}
-chamarBotao("btn-finalizar-sessao", "click", finalizarRecarga);
+    chamarBotao("btn-finalizar-sessao", "click", finalizarRecarga);
 
+    // --------------------------------------------------------
+    //  Reiniciar sessão (botão "Voltar ao início")
+    // --------------------------------------------------------
 
+    function reiniciarSessao() {
+        // Limpa dados da sessão atual e volta ao formulário
+        sessionStorage.removeItem("dadosSessao");
+        window.location.href = "index.html";
+    }
+    chamarBotao("btn-voltar-inicio", "click", reiniciarSessao);
 
-function reiniciarSessao() {
-
-    // para qualquer recarga ativa
-    carregandoNull();
-
-    // volta valores iniciais
-    energiaInicial = Math.floor(Math.random() * 26);
-
-    bateriaInicialSessao = energiaInicial;
-
-    tempoDeRecarga = 0;
-
-    pontosAnimacao = 0;
-
-    horarioInicioSessao = "";
-    horarioFimSessao = "";
-
-
-    // atualiza bateria
-    atualizarTexto("porcentagem-bateria", energiaInicial + "%");
-
-
-    // atualiza barra
-    document.getElementById("barra-progresso").style.width =
-        energiaInicial + "%";
-
-
-    // reseta tempo
-    atualizarTexto("tempo-decorrido", "00:00:00");
-
-
-    // reseta custo
-    atualizarTexto("custo-estimado", "R$ 0,00");
-
-
-    // reseta kWh
-    atualizarTexto("energia-entregue", "0.00 kWh");
-
-
-    // reseta horários
-    atualizarTexto("horario-inicio", "--:--:--");
-
-    atualizarTexto("horario-fim", "--:--:--");
-    
-    atualizarTexto("relatorio-inicio", "--:--:--");
-
-    atualizarTexto("relatorio-fim", "--:--:--");
-
-
-    // volta status
-    atualizarHTML("status-carregamento", "battery-charging", "Aguardando recarga");
-    // esconde relatório
-    document.getElementById("relatorio-sessao").hidden = true;
-
-
-    // mostra botões novamente
-    document.getElementById("btn-continuar-sessao").style.display = "flex";
-
-    document.getElementById("btn-pausar-sessao").style.display = "flex";
-
-
-    // reseta botão continuar
-    atualizarHTML("btn-continuar-sessao", "play", "Iniciar");
-
-    // reseta botão pausar
-    atualizarHTML("btn-pausar-sessao", "pause", "Pausar");
-
-    // inicia nova recarga automaticamente
-    iniciarRecarga();
-
-    console.log("Nova sessão iniciada");
-}
-chamarBotao("btn-voltar-inicio", "click", reiniciarSessao);
+    // --------------------------------------------------------
+    //  Estado inicial da barra de progresso
+    // --------------------------------------------------------
+    atualizarBarraProgresso();
+} // fim do bloco da página de recarga
